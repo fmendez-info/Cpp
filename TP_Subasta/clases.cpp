@@ -1,42 +1,127 @@
+#include "clases.h"
 #include <iostream>
-#include <vector>
+#include <string>
 using namespace std;
 
-void Persona:: setNombre(string n){this->nombre = n;}
-string getNombre(){return this->nombre;}
+//-Persona---------------------
+//-Constructor
+Persona::Persona(string n) : nombre(n) {}
 
-class Oferta
+string Persona::getNombre()
 {
-    private:
-        Persona ofertante;
-        float monto;
-    public:
-        void setOferta(Persona persona, float monto);
-        Persona getOfertante();
-        float getMonto();
-};
-
-class Lote
+    return nombre;
+}
+//-Sobrecarga del cout para Persona
+ostream &operator<<(ostream &os, const Persona &P)
 {
-    private:
-        int id;
-        string nombre;
-        Oferta maxOferta;
-    public:
-        void setearOferta();
-
-};
-
-Lote:: setearOferta()
-{
-
-    return;
+    os << P.nombre;
+    return os;
 }
 
-class Subasta
+//-Oferta----------------------
+//-Constructor
+Oferta::Oferta(Persona p, float m) : ofertante(p), monto(m) {}
+Persona Oferta::getOfertante()
 {
-    private:
-        vector<Lote> lotes;
-        int cantidadLotes;
-    public:
-};
+    return ofertante;
+}
+float Oferta::getMonto()
+{
+    return monto;
+}
+// Sobrecarga del cout para Oferta
+ostream &operator<<(ostream &os, const Oferta &O)
+{
+    os << O.monto
+       << " de " << O.ofertante;
+    return os;
+}
+
+//-Lote------------------------
+//-Constructor
+Lote::Lote(int id, string n) : id(id), nombre(n), maxOferta(nullptr) {}
+int Lote::getId()
+{
+    return id;
+}
+string Lote::getNombre()
+{
+    return nombre;
+}
+Oferta Lote::getMaxOferta()
+{
+    return *maxOferta;
+}
+void Lote::setOferta(Oferta nuevaOferta)
+{
+    cout << nuevaOferta.getOfertante()
+         << " oferto " << nuevaOferta.getMonto()
+         << " por \"" << nombre << "\""
+         << endl;
+    if (maxOferta == nullptr)
+    {
+        maxOferta = &nuevaOferta;
+        cout << "Es la primera oferta para \"" << nombre << "\"."
+             << endl;
+    }
+    else if (nuevaOferta.getMonto() > maxOferta->getMonto())
+    {
+        maxOferta = &nuevaOferta;
+        cout << "La oferta reemplaza a la anterior." << endl;
+    }
+    else
+    {
+        cout << "La oferta es menor a la actual, no se registra." << endl;
+    }
+    cout << "Oferta actual para \"" << nombre
+         << "\": " << maxOferta->getMonto()
+         << " de " << maxOferta->getOfertante()
+         << endl;
+    return;
+}
+//-Sobrecarga del cout para Lote
+ostream &operator<<(ostream &os, const Lote &L)
+{
+    if (L.maxOferta != nullptr)
+    {
+        os << "-ID: " << L.id
+           << " -Nombre: " << L.nombre
+           << " -Oferta: " << *L.maxOferta;
+    }
+    else
+    {
+        os << "-ID: " << L.id
+           << " -Nombre: " << L.nombre
+           << " -Oferta: " << "sin oferta aun";
+    }
+    return os;
+}
+
+// Subasta
+// Constructor
+Subasta::Subasta() : lotes(), cantidadLotes(0) {}
+void Subasta::insertLote(int id, string n)
+{
+    Lote lote(id, n);
+    lotes.push_back(lote);
+    cout << "Lote: " << lote << " ingresado." << endl;
+}
+void Subasta::ofertarLote(int idLote, string persona, float monto)
+{
+    Lote* loteBuscado;
+    for (auto lote : lotes)
+    {
+        if (lote.getId() == idLote)
+        {
+            loteBuscado = &lote;
+            break;
+        }
+    }
+    if (loteBuscado != nullptr)
+    {
+        Oferta oferta(Persona(persona),monto);
+        loteBuscado->setOferta(oferta);
+    } else {
+        cout << "ID de lote no encontrado." << endl;
+    }
+}
