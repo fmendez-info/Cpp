@@ -1,41 +1,52 @@
-#include <iostream>
+#ifndef CLASES_H
+#define CLASES_H
+
+#include <string>
 #include <vector>
 using namespace std;
 
-class Persona
-{
+class Persona {
     private:
         string nombre;
     public:
-        void setNombre(string n){this->nombre = n;}
-        string getNombre(){return this->nombre;}
+        Persona(string);
+        string getNombre();
+        friend ostream& operator<<(ostream&, const Persona&);
 };
 
-class Oferta
-{
+class Oferta {
     private:
         Persona ofertante;
         float monto;
     public:
-        void setOferta(Persona persona, float monto);
+        Oferta(Persona, float);
         Persona getOfertante();
         float getMonto();
+        friend ostream& operator<<(ostream&, const Oferta&);
 };
 
-class Lote
-{
+class Lote {
     private:
         int id;
         string nombre;
-        Oferta maxOferta;
+        Oferta* maxOferta;
     public:
-        void setearOferta();
+        Lote(int, string);
+        int getId();
+        string getNombre();
+        Oferta getMaxOferta();
+        void setOferta(Oferta);
+        friend ostream& operator<<(ostream&, const Lote&);
 };
 
-class Subasta
-{
+class Subasta {
     private:
         vector<Lote> lotes;
         int cantidadLotes;
     public:
+        Subasta();
+        void insertLote(int, string);
+        void ofertarLote(int, string, float);
 };
+
+#endif
