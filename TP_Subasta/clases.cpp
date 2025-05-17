@@ -1,3 +1,6 @@
+// clases.cpp
+// Definicion de metodos de cada clase
+
 #include "clases.h"
 #include <iostream>
 #include <string>
@@ -20,26 +23,33 @@ ostream &operator<<(ostream &os, const Persona &P)
 
 //-Oferta----------------------
 //-Constructor
-Oferta::Oferta(Persona p, float m) : ofertante(p), monto(m) {}
-Persona Oferta::getOfertante()
-{
-    return ofertante;
-}
+Oferta::Oferta(float m, Persona p) : monto(m), ofertante(p) {}
 float Oferta::getMonto()
 {
     return monto;
 }
+Persona Oferta::getOfertante()
+{
+    return ofertante;
+}
+Oferta::~Oferta() {}
 // Sobrecarga del cout para Oferta
 ostream &operator<<(ostream &os, const Oferta &O)
 {
-    os << O.monto
-       << " de " << O.ofertante;
+    os << "$";
+    // imprimo monto como entero si es mayor a 100000
+    O.monto >= 100000 ? os << (int)O.monto : os << O.monto;
+    os << " de " << O.ofertante;
     return os;
 }
 
 //-Lote------------------------
 //-Constructor
 Lote::Lote(int id, string n) : id(id), nombre(n), maxOferta(nullptr) {}
+Lote::~Lote()
+{
+    delete maxOferta;
+}
 int Lote::getId()
 {
     return id;
@@ -48,25 +58,27 @@ string Lote::getNombre()
 {
     return nombre;
 }
-Oferta Lote::getMaxOferta()
+Oferta* Lote::getMaxOferta()
 {
-    return *maxOferta;
+    return maxOferta;
 }
 void Lote::setOferta(Oferta nuevaOferta)
 {
-    cout << nuevaOferta.getOfertante()
-         << " oferto " << nuevaOferta.getMonto()
+    /* cout << nuevaOferta->getOfertante()
+         << " oferto " << nuevaOferta->getMonto()
          << " por \"" << nombre << "\""
-         << endl;
+         << endl; */
     if (maxOferta == nullptr)
     {
-        maxOferta = &nuevaOferta;
+        delete maxOferta;
+        maxOferta = new Oferta(nuevaOferta);
         cout << "Es la primera oferta para \"" << nombre << "\"."
              << endl;
     }
     else if (nuevaOferta.getMonto() > maxOferta->getMonto())
     {
-        maxOferta = &nuevaOferta;
+        delete maxOferta;
+        maxOferta = new Oferta(nuevaOferta);
         cout << "La oferta reemplaza a la anterior." << endl;
     }
     else
@@ -74,9 +86,8 @@ void Lote::setOferta(Oferta nuevaOferta)
         cout << "La oferta es menor a la actual, no se registra." << endl;
     }
     cout << "Oferta actual para \"" << nombre
-         << "\": " << maxOferta->getMonto()
-         << " de " << maxOferta->getOfertante()
-         << endl;
+         << "\": " << *maxOferta
+         << "." << endl;
     return;
 }
 //-Sobrecarga del cout para Lote
@@ -84,17 +95,17 @@ ostream &operator<<(ostream &os, const Lote &L)
 {
     if (L.maxOferta != nullptr)
     {
-        os << "Puntero: " << &L
-           << " -ID: " << L.id
-           << " -Nombre: " << L.nombre
-           << " -Oferta: " << *L.maxOferta;
+        os //<< "Puntero: " << &L << ", "
+           << "ID: " << L.id << ", "
+           << "Nombre: " << L.nombre << ", "
+           << "Oferta: " << *L.maxOferta;
     }
     else
     {
-        os << "Puntero: " << &L
-           << " -ID: " << L.id
-           << " -Nombre: " << L.nombre
-           << " -Oferta: " << "sin oferta aun";
+        os //<< "Puntero: " << &L << ", "
+           << "ID: " << L.id << ", "
+           << "Nombre: " << L.nombre << ", "
+           << "Oferta: " << "sin oferta aun";
     }
     return os;
 }
@@ -102,62 +113,90 @@ ostream &operator<<(ostream &os, const Lote &L)
 // Subasta
 // Constructor
 Subasta::Subasta() : lotes(), cantidadLotes(0) {
-    cout << "Inicia la subasta: " << *this << "." << endl;
+    cout << "Se crea la subasta: " << *this << endl;
+}
+Subasta::~Subasta()
+{
+    for (auto lote : lotes){
+        delete lote;
+    }
+}
+vector<Lote*> Subasta::getLotes()
+{
+    return lotes;
+}
+int Subasta::getCantidadLotes()
+{
+    return cantidadLotes;
 }
 void Subasta::insertLote(int id, string n)
 {
-    Lote lote(id, n);
-    lotes.push_back(&lote);
+    if (buscarLote(id)!=nullptr)
+    {
+        cout << "Numero de lote " << id << " ya existe." << endl;
+        return;
+    }
+    Lote* lote = new Lote(id, n);
+    lotes.push_back(lote);
     cantidadLotes++;
-    cout << "Lote ingresado: " << lote << "." << endl;
+    cout << "  -Lote ingresado: " << *lote << "." << endl;
+    return;
+}
+Lote* Subasta::buscarLote(int idLote)
+{
+    for (auto lote : lotes)
+    {
+        //cout << "Puntero lote: " << lote << endl; // testing punteros
+        if (lote->getId() == idLote)
+        {
+            return lote;
+        }
+    }
+    return nullptr;
 }
 void Subasta::ofertarLote(int idLote, string persona, float monto)
 {
-    Lote* loteBuscado;
-    for (auto lote : lotes)
+    cout << endl
+         << "Oferta en lote " << idLote << ": "
+         << persona << " oferta $";
+    monto >= 100000 ? cout << (int)monto : cout << monto;
+    cout << "." << endl;
+    
+    Lote* loteEncontrado = buscarLote(idLote);
+    if (loteEncontrado==nullptr)
     {
-        cout << "Puntero lote: " << lote << endl;
-        if (lote->getId() == idLote)
-        {
-            loteBuscado = lote;
-            break;
-        }
+        cout << endl << "ID de lote no encontrado." << endl;
+        return;
     }
-    if (loteBuscado != nullptr)
-    {
-        cout << "Lote encontrado: " << *loteBuscado << endl;
-        Oferta oferta(Persona(persona),monto);
-        loteBuscado->setOferta(oferta);
-    } else {
-        cout << "ID de lote no encontrado." << endl;
-    }
+    cout << "Lote encontrado: " << *loteEncontrado
+         << "." << endl;
+    Persona ofertante(persona);
+    Oferta oferta (monto,ofertante);
+    loteEncontrado->setOferta(oferta);
+    return;
 }
-/* vector<Lote> Subasta::getLotes()
-{
-
-    return lotes;
-} */
-
-// Sobrecarga del cout para vector de lotes
+//-Sobrecarga del cout para vector de lotes----------------
 ostream &operator<<(ostream &os, const vector<Lote*> &lotes)
 {
     for (auto lote : lotes)
     {
-        os << *lote << endl;
+        os << "  -" << *lote
+           << "." << endl;
     }
     return os;
 }
-//-Sobrecarga del cout para Subasta
+//-Sobrecarga del cout para Subasta------------------------
 ostream &operator<<(ostream &os, const Subasta &S)
 {
     if (S.cantidadLotes != 0)
     {
         os << "Cantidad de lotes: " << S.cantidadLotes << endl
-           << "Lotes: " << endl << S.lotes;
+           << "Lotes: " << endl << S.lotes
+           << endl;
     }
     else
     {
-        os << "sin lotes";
+        os << "sin lotes." << endl;
     }
     return os;
 }

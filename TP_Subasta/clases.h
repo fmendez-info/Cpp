@@ -1,3 +1,6 @@
+// clases.h
+// Definicion de clases
+
 #ifndef CLASES_H
 #define CLASES_H
 
@@ -16,12 +19,13 @@ class Persona {
 
 class Oferta {
     private:
-        Persona ofertante;
         float monto;
+        Persona ofertante;
     public:
-        Oferta(Persona, float);
-        Persona getOfertante();
+        Oferta(float, Persona);
+        ~Oferta();
         float getMonto();
+        Persona getOfertante();
         friend ostream& operator<<(ostream&, const Oferta&);
 };
 
@@ -32,22 +36,26 @@ class Lote {
         Oferta* maxOferta;
     public:
         Lote(int, string);
+        ~Lote();
         int getId();
         string getNombre();
-        Oferta getMaxOferta();
+        Oferta* getMaxOferta();
         void setOferta(Oferta);
         friend ostream& operator<<(ostream&, const Lote&);
 };
 
 class Subasta {
     private:
-        vector<Lote> lotes;
+        vector<Lote*> lotes;
         int cantidadLotes;
     public:
         Subasta();
+        ~Subasta();
+        vector<Lote*> getLotes();
+        int getCantidadLotes();
+        Lote* buscarLote(int);
         void insertLote(int, string);
         void ofertarLote(int, string, float);
-        vector<Lote> getLotes();
         friend ostream& operator<<(ostream&, const Subasta&);
 };
 
