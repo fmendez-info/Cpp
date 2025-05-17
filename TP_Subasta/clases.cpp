@@ -84,13 +84,15 @@ ostream &operator<<(ostream &os, const Lote &L)
 {
     if (L.maxOferta != nullptr)
     {
-        os << "-ID: " << L.id
+        os << "Puntero: " << &L
+           << " -ID: " << L.id
            << " -Nombre: " << L.nombre
            << " -Oferta: " << *L.maxOferta;
     }
     else
     {
-        os << "-ID: " << L.id
+        os << "Puntero: " << &L
+           << " -ID: " << L.id
            << " -Nombre: " << L.nombre
            << " -Oferta: " << "sin oferta aun";
     }
@@ -99,29 +101,63 @@ ostream &operator<<(ostream &os, const Lote &L)
 
 // Subasta
 // Constructor
-Subasta::Subasta() : lotes(), cantidadLotes(0) {}
+Subasta::Subasta() : lotes(), cantidadLotes(0) {
+    cout << "Inicia la subasta: " << *this << "." << endl;
+}
 void Subasta::insertLote(int id, string n)
 {
     Lote lote(id, n);
-    lotes.push_back(lote);
-    cout << "Lote: " << lote << " ingresado." << endl;
+    lotes.push_back(&lote);
+    cantidadLotes++;
+    cout << "Lote ingresado: " << lote << "." << endl;
 }
 void Subasta::ofertarLote(int idLote, string persona, float monto)
 {
     Lote* loteBuscado;
     for (auto lote : lotes)
     {
-        if (lote.getId() == idLote)
+        cout << "Puntero lote: " << lote << endl;
+        if (lote->getId() == idLote)
         {
-            loteBuscado = &lote;
+            loteBuscado = lote;
             break;
         }
     }
     if (loteBuscado != nullptr)
     {
+        cout << "Lote encontrado: " << *loteBuscado << endl;
         Oferta oferta(Persona(persona),monto);
         loteBuscado->setOferta(oferta);
     } else {
         cout << "ID de lote no encontrado." << endl;
     }
+}
+/* vector<Lote> Subasta::getLotes()
+{
+
+    return lotes;
+} */
+
+// Sobrecarga del cout para vector de lotes
+ostream &operator<<(ostream &os, const vector<Lote*> &lotes)
+{
+    for (auto lote : lotes)
+    {
+        os << *lote << endl;
+    }
+    return os;
+}
+//-Sobrecarga del cout para Subasta
+ostream &operator<<(ostream &os, const Subasta &S)
+{
+    if (S.cantidadLotes != 0)
+    {
+        os << "Cantidad de lotes: " << S.cantidadLotes << endl
+           << "Lotes: " << endl << S.lotes;
+    }
+    else
+    {
+        os << "sin lotes";
+    }
+    return os;
 }

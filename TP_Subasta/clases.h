@@ -47,6 +47,8 @@ class Subasta {
         Subasta();
         void insertLote(int, string);
         void ofertarLote(int, string, float);
+        vector<Lote> getLotes();
+        friend ostream& operator<<(ostream&, const Subasta&);
 };
 
 #endif
