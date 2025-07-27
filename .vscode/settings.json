@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.h": "cpp",
         "iostream": "cpp",
         "xstring": "cpp",
         "vector": "cpp",
@@ -50,6 +51,8 @@
         "xmemory": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "map": "cpp",
+        "xtree": "cpp"
     }
 }

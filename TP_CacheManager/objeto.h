@@ -1,6 +1,9 @@
 // clases.h
 // Definicion de clases
 
+#ifndef OBJETO_H
+#define OBJETO_H
+
 #include <string>
 
 using namespace std;
@@ -8,7 +11,7 @@ using namespace std;
 class Student {
     private:
         int id;
-        int value
+        int value;
         string data;
     public:
         static const string class_name;
@@ -16,4 +19,6 @@ class Student {
         ~Student();
         void print();
         friend ostream& operator<<(ostream&, const Student&);
-}
+};
+
+#endif

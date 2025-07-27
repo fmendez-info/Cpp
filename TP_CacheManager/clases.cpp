@@ -37,9 +37,9 @@ T CacheManager<T>::get(string key)
     // de archivos, el programa debe informarlo
 }
 
-template <class T>
+/* template <class T>
 ostream &operator<<(ostream &os, const CacheManager<T> &C)
 {
-    os << C.capacidad;
+    os << C.capacidad();
     return os;
-}
+} */

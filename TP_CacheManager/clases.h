@@ -1,11 +1,16 @@
 // clases.h
 // Definicion de clases
 
+#ifndef CLASES_H
+#define CLASES_H
+
 #include <iostream>
 #include <fstream>
-
+#include <map>
+#include <utility>
 #include <string>
 #include <vector>
+
 using namespace std;
 
 template <class T>
@@ -20,6 +25,8 @@ class CacheManager {
         ~CacheManager();
         void insert(string, T);
         T get(string);
-
-        friend ostream& operator<<(ostream&, const CacheManager&);
+        template <class U>
+        //friend ostream& operator<<(ostream&, const CacheManager<T>&);
 };
+
+#endif
