@@ -25,8 +25,9 @@ class CacheManager {
         ~CacheManager();
         void insert(string, T);
         T get(string);
+        void show_cache();
         template <class U>
-        //friend ostream& operator<<(ostream&, const CacheManager<T>&);
+        friend ostream& operator<<(ostream&, const CacheManager<U>&);
 };
 
 #endif

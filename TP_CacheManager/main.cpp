@@ -17,6 +17,8 @@ int main(){
     cache.insert("2", Student(2,25,"Estudiante3"));
     cache.insert("3", Student(3,29,"Estudiante4"));
 
+    cache.get("Estudiante2");
+
     cout << cache << endl;
 
     cache.insert("2", Student(22,222,"EZE"));

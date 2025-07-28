@@ -17,7 +17,7 @@ class Student {
         static const string class_name;
         Student(int k, int v, string d);
         ~Student();
-        void print();
+        //void print();
         friend ostream& operator<<(ostream&, const Student&);
 };
 
