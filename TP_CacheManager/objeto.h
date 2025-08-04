@@ -11,14 +11,15 @@ using namespace std;
 class Student {
     private:
         int id;
-        int value;
-        string data;
+        int valor;
+        string nombre;
     public:
         static const string class_name;
+        Student();
         Student(int k, int v, string d);
         ~Student();
-        //void print();
         friend ostream& operator<<(ostream&, const Student&);
+        friend istream& operator>>(istream&, Student&);
 };
 
 #endif

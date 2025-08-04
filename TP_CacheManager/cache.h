@@ -1,8 +1,8 @@
-// clases.h
-// Definicion de clases
+// cache.h
+// Definicion de la clase
 
-#ifndef CLASES_H
-#define CLASES_H
+#ifndef CACHE_H
+#define CACHE_H
 
 #include <iostream>
 #include <fstream>
@@ -16,18 +16,19 @@ using namespace std;
 template <class T>
 class CacheManager {
     private:
-        int capacidad;
+        size_t capacidad;
+        int indice;
         map <string, pair<T, int>> cache_data;
         //  <clave,<Objeto,Indice>>
-        bool write_file(string,T);
+        bool write_file(string, T);
+        map <string, T> read_file();
+        void show_file();
     public:
         CacheManager(int); //recibe la capacidad
         ~CacheManager();
         void insert(string, T);
         T get(string);
         void show_cache();
-        template <class U>
-        friend ostream& operator<<(ostream&, const CacheManager<U>&);
 };
 
 #endif
